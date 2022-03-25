@@ -1,0 +1,37 @@
+package main
+
+import (
+	"fmt"
+
+	airtable "github.com/fabioberger/airtable-go"
+)
+
+func main() {
+	client, err := airtable.New("keyOmJMHGYoQpMxYw", "appQntnFzrheCxlir")
+
+	type task struct {
+		AirtableID string
+		Fields     struct {
+			Staff string
+			Notes string
+		}
+	}
+
+	aTask := task{}
+	aTask.Fields.Staff = "ContactSuppliers"
+	aTask.Fields.Notes = "Get pricing on both the blue and green variants"
+
+	fmt.Println(aTask.Fields.Staff)
+
+	client.CreateRecord("Testing", &aTask)
+
+	fmt.Println(err)
+
+	if err != nil {
+		panic(err)
+	}
+
+	fmt.Println(aTask.AirtableID)
+
+	// aTask.AirtableID is now set to the newly created Airtable recordID
+}
