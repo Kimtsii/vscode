@@ -1,6 +1,8 @@
 package main
 
 import (
+	"fmt"
+
 	"github.com/mehanizm/airtable"
 )
 
@@ -11,13 +13,34 @@ func main() {
 	table := client.GetTable("appQntnFzrheCxlir", "Testing")
 
 	records, err := table.GetRecords().
-		FromView("view_1").
-		WithFilterFormula("AND({Field1}='value_1',NOT({Field2}='value_2'))").
-		WithSort(sortQuery1, sortQuery2).
-		ReturnFields("Field1", "Field2").
-		InStringFormat("Europe/Moscow", "ru").
+		FromView("Test").
+		ReturnFields("FacebookID", "Message").
 		Do()
 	if err != nil {
 		// Handle error
+		panic(err)
 	}
+	for i := 0; i < len(records.Records); i++ {
+		fmt.Print(records.Records[i].ID, ", ", records.Records[i].Fields["Message"], "\n")
+	}
+
+	toUpdateRecords := &airtable.Records{
+		Records: []*airtable.Record{
+
+			{
+				ID:          "reca0PKxNyFnqKN72",
+				Fields:      map[string]interface{}{"FacebookID": "Testing", "Message": "Add"},
+				CreatedTime: "",
+				Deleted:     false,
+				Typecast:    false,
+			},
+		},
+	}
+	updatedRecords, err := table.UpdateRecords(toUpdateRecords)
+	if err != nil {
+		// Handle error
+		panic(err)
+
+	}
+	fmt.Println(updatedRecords)
 }
